@@ -25,7 +25,8 @@ class ProducaoMedicaController extends Controller
         ],
         'params' => '',
         'count' => 0,
-        'classes' => $classes
+        'classes' => $classes,
+        'old' => fn() => $request->old()
       ]);
     }
 
@@ -90,7 +91,8 @@ class ProducaoMedicaController extends Controller
           'prestadores' => $resultados,
           'params' => $params,
           'count' => $count,
-          'classes' => $classes
+          'classes' => $classes,
+          'old' => $request->all()
         ]);
 
       }catch (\Exception $e){
@@ -100,6 +102,7 @@ class ProducaoMedicaController extends Controller
 
     public function sendEmail(Request $request)
     {
+      $users = collect();
 
       if ($request->input('massSend', false)) {
 

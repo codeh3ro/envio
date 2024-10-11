@@ -2,6 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import {Head, useForm, usePage} from '@inertiajs/react';
 import React, {useState, FormEventHandler, useEffect} from 'react';
 import { PatternFormat } from 'react-number-format';
+import Swal from 'sweetalert2'
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -36,8 +37,6 @@ import {Square, SquareX} from 'lucide-react';
 import { Link, Pagination} from "@/Components/Pagination";
 
 import { toast } from 'react-toastify';
-
-import InputError from "@/Components/InputError";
 
 type IRoot = {
   current_page: number
@@ -159,19 +158,28 @@ type Props = {
   prestadores?: IRoot
   count?: number
   classes: IClasses[]
+  old: {
+    compFinanceira: string
+    codigoContrato: string
+    classePrestador: string
+    diaInicial: string
+    diaFinal: string
+  }
 }
 
 
-export default function EnvioProducaoMedica({ prestadores, count, classes } : Props) {
+export default function EnvioProducaoMedica({ prestadores, count, classes, old } : Props) {
 
   const errors = usePage().props.errors;
 
+  console.log(old);
+
   const { data, setData, post, processing, get } = useForm({
-    compFinanceira: '',
-    codigoContrato: '',
-    classePrestador: '',
-    diaInicial: '',
-    diaFinal: '',
+    compFinanceira: old.compFinanceira || '',
+    codigoContrato: old.codigoContrato || '',
+    classePrestador: old.classePrestador || '',
+    diaInicial: old.diaInicial || '',
+    diaFinal: old.diaFinal || '',
   });
 
   console.log(errors)
@@ -211,7 +219,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes } : Pr
         diaInicial: data.diaInicial,
         diaFinal: data.diaFinal,
       }
-
+      console.log(paramsData);
       // Quando for envio em massa, passamos a flag sem enviar os dados
       post(route('envioProducaoMedica.sendMail', { queryParams: paramsData , massSend: true }),{
         onSuccess: () => {
@@ -413,7 +421,23 @@ export default function EnvioProducaoMedica({ prestadores, count, classes } : Pr
 
                     {selectedPrestadores.length > 0 && (
                       <div className="w-auto max-w-sm mt-0 ml-4">
-                        <Button disabled={processing} onClick={() => handleSendEmail(false, true)}>
+                        <Button disabled={processing} onClick={() => {
+                          Swal.fire({
+                            title: "Confirme para prosseguir",
+                            text: "Deseja enviar e-mail para selecionados?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#0f172a",
+                            cancelButtonColor: "#d33",
+                            confirmButtonText: "Sim",
+                            cancelButtonText: "Não"
+                          }).then((result:any) => {
+                            if (result.isConfirmed) {
+                              handleSendEmail(false, true)
+                            }
+                          });
+                          }
+                        }>
                           Enviar e-mail para selecionados ({selectedPrestadores.length})
                         </Button>
                       </div>
@@ -448,9 +472,25 @@ export default function EnvioProducaoMedica({ prestadores, count, classes } : Pr
                             size={'sm'}
                             variant='default'
                             disabled={processing}
-                            onClick={() => handleSendEmail(true)}
+                            onClick={() => {
+                              Swal.fire({
+                                title: "Confirme para prosseguir",
+                                text: "Deseja mesmo enviar para todos?",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#0f172a",
+                                cancelButtonColor: "#d33",
+                                confirmButtonText: "Sim",
+                                cancelButtonText: "Não"
+                              }).then((result:any) => {
+                                if (result.isConfirmed) {
+                                  handleSendEmail(true)
+                                }
+                              });
+                              }
+                            }
                           >
-                            Enviar e-mail para todos
+                            Enviar para todos
                           </Button>
                         </TableHead>
                       </TableRow>
@@ -472,7 +512,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes } : Pr
                             className="text-left">{Number(client.ValorBruto).toLocaleString('pt-br', {minimumFractionDigits: 2})}</TableCell>
                           <TableCell
                             className="text-left">{Number(client.ValorLiquido).toLocaleString('pt-br', {minimumFractionDigits: 2})}</TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right" hidden>
                             <Dialog>
                               <DialogTrigger asChild>
                                 <Button variant="outline" disabled={processing}>Enviar E-mail</Button>
@@ -499,6 +539,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes } : Pr
                                         contratoFinanceiro: client.ContratoFinanceiro,
                                         autoId: client.AutoId
                                     }
+                                    console.log(userData);
 
                                       post(route('envioProducaoMedica.sendMail', { users: [ userData ] }),{
                                         onSuccess: () => {
