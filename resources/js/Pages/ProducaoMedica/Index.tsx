@@ -529,7 +529,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
                         <TableRow key={client.Codigo}>
                           <TableCell>
                             <Checkbox
-                              disabled={client.email_pessoa.Email == '' ? true : false}
+                              disabled={!client.email_pessoa || client.email_pessoa.Email === ''}
                               checked={selectedPrestadores.includes(client)}
                               onCheckedChange={() => handleCheckboxChange(client)}
 
