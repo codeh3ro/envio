@@ -243,7 +243,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
 
       // Envio somente para os usuários selecionados, independente da página
       const userData = selectedPrestadores.map(user => ({
-        email: user.email_pessoa.Email,
+        email: user.email_pessoa?.Email || '',
         nome: user.Nome,
         competencia: user.CompFinanceira,
         contrato: user.Codigo,
