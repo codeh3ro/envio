@@ -536,7 +536,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
                             />
                           </TableCell>
                           <TableCell className="text-left">{client.Nome}</TableCell>
-                          <TableCell className="text-left">{client.email_pessoa.Email}</TableCell>
+                          <TableCell className="text-left">{client.email_pessoa?.Email || ''}</TableCell>
                           <TableCell className="text-left">{client.Codigo}</TableCell>
                           <TableCell className="text-left">{client.CompFinanceira}</TableCell>
                           <TableCell
