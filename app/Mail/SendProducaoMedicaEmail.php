@@ -47,6 +47,7 @@ class SendProducaoMedicaEmail extends Mailable
               'competencia' => $this->competencia,
               'nome' => $this->nome,
               'contrato' => $this->contrato,
+              'logoCid' => 'logo.png'
             ],
         );
     }
@@ -59,13 +60,18 @@ class SendProducaoMedicaEmail extends Mailable
     public function attachments(): array
     {
         $pathsTempFile = $this->tempFiles;
-        $atachments = [];
+        $attachments = [];
+
+        // Adicione o logotipo como um anexo inline com Content ID 'logoCid'
+        $attachments[] = Attachment::fromPath(public_path('assets/logo.png'))
+            ->as('logo.png')
+            ->withMime('image/png');
 
         foreach ($pathsTempFile as $path) {
-          $atachments[] = Attachment::fromPath(Storage::path($path));
+          $attachments[] = Attachment::fromPath(Storage::path($path));
         }
 
-        return $atachments;
+        return $attachments;
 //          [
 //          Attachment::fromPath(Storage::path($pathsTempFile)),
 //        ];

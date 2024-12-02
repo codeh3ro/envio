@@ -172,8 +172,6 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
 
   const errors = usePage().props.errors;
 
-  console.log(old);
-
   const { data, setData, post, processing, get } = useForm({
     compFinanceira: old.compFinanceira || '',
     codigoContrato: old.codigoContrato || '',
@@ -181,8 +179,6 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
     diaInicial: old.diaInicial || '',
     diaFinal: old.diaFinal || '',
   });
-
-  console.log(errors)
 
   const [searchTerm, setSearchTerm] = useState('')
   const [selectAllChecked, setSelectAllChecked] = useState(false);
@@ -203,11 +199,23 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
 
   const handleCheckboxChange = (user: any) => {
     if (selectedPrestadores.includes(user)) {
-      setSelectedPrestadores(selectedPrestadores.filter(e => e !== user));
+      setSelectedPrestadores(selectedPrestadores.filter((e) => e !== user));
     } else {
       setSelectedPrestadores([...selectedPrestadores, user]);
     }
   };
+
+  /*const handleCheckboxChange = (user: any) => {
+    if (selectedPrestadores.includes(user)) {
+      // Remove o usuário da lista
+      setSelectedPrestadores(selectedPrestadores.filter((e) => e !== user));
+    } else if (user?.email_pessoa?.Email && user.email_pessoa.Email.trim() !== "") {
+      // Adiciona o usuário à lista apenas se ele tiver um e-mail válido
+      setSelectedPrestadores([...selectedPrestadores, user]);
+    }
+  };*/
+
+  console.log(selectedPrestadores)
 
   const handleSendEmail = (massSend = false, onlySelected = false) => {
 
@@ -289,14 +297,35 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
     get(route('envioProducaoMedica.searchAll'));
   };
 
-  function toggleSelectAll() {
+  /*function toggleSelectAll() {
     if (selectAllChecked) {
       setSelectedPrestadores([]);
     } else {
-      setSelectedPrestadores(prestadores?.data.map(prestador => prestador) ?? []);
+      setSelectedPrestadores(
+        prestadores?.data
+        .map((prestador) => {
+        if(prestador.email_pessoa.Email !== ''){
+          return prestador
+        }else{
+          return null
+        }
+      }) ?? []);
     }
     setSelectAllChecked(!selectAllChecked);
-  }
+  }*/
+
+    function toggleSelectAll() {
+      if (selectAllChecked) {
+        setSelectedPrestadores([]);
+      } else {
+        setSelectedPrestadores(
+          prestadores?.data
+            .filter(prestador => prestador?.email_pessoa?.Email?.trim() !== '')
+            .map(prestador => prestador) ?? []
+        );
+      }
+      setSelectAllChecked(!selectAllChecked);
+    }
 
   return (
         <AuthenticatedLayout
@@ -500,8 +529,10 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
                         <TableRow key={client.Codigo}>
                           <TableCell>
                             <Checkbox
+                              disabled={client.email_pessoa.Email == '' ? true : false}
                               checked={selectedPrestadores.includes(client)}
                               onCheckedChange={() => handleCheckboxChange(client)}
+
                             />
                           </TableCell>
                           <TableCell className="text-left">{client.Nome}</TableCell>
@@ -539,8 +570,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
                                         contratoFinanceiro: client.ContratoFinanceiro,
                                         autoId: client.AutoId
                                     }
-                                    console.log(userData);
-
+                                    
                                       post(route('envioProducaoMedica.sendMail', { users: [ userData ] }),{
                                         onSuccess: () => {
                                           setSelectedPrestadores([]);

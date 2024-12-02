@@ -92,7 +92,7 @@
                             <tr>
                               <td align="center" style="padding:0;Margin:0;font-size:0px">
                                 <a target="_blank" href="{{ config('app.url') }}" style="mso-line-height-rule:exactly;text-decoration:underline;color:#2D3142;font-size:18px">
-                                  <img src="{{ @asset('assets/logo.png') }}" alt="Unimed Logo" title="{{ config('app.name') }}" width="200" height="100" style="display:block;font-size:18px;border:0;outline:none;text-decoration:none;border-radius:0">
+                                  <img src="cid:{{ $logoCid }}" alt="Unimed Logo" title="{{ config('app.name') }}" width="200" height="100" style="display:block;font-size:18px;border:0;outline:none;text-decoration:none;border-radius:0">
                                 </a>
                               </td>
                             </tr>

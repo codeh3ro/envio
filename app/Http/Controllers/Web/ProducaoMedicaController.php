@@ -83,7 +83,9 @@ class ProducaoMedicaController extends Controller
 
         $count = $query->count();
 
-        $resultados = $query->paginate(10);
+        //return $query->toRawSql();
+
+        $resultados = $query->paginate(30);
 
         $classes = ClassePrestador::all('Codigo', 'Nome');
 
