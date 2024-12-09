@@ -164,6 +164,7 @@ type Props = {
     classePrestador: string
     diaInicial: string
     diaFinal: string
+    anexo: null
   }
 }
 
@@ -178,12 +179,14 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
     classePrestador: old.classePrestador || '',
     diaInicial: old.diaInicial || '',
     diaFinal: old.diaFinal || '',
+    anexo: old.anexo || (null as File | null),
   });
 
   const [searchTerm, setSearchTerm] = useState('')
   const [selectAllChecked, setSelectAllChecked] = useState(false);
   const [selectedPrestadores, setSelectedPrestadores] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
+  const [uploadedFilePath, setUploadedFilePath] = useState('');
 
   const handleClose = () => setOpen(false);
 
@@ -215,9 +218,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
     }
   };*/
 
-  console.log(selectedPrestadores)
-
-  const handleSendEmail = (massSend = false, onlySelected = false) => {
+  const handleSendEmail = (massSend = false, onlySelected = false) => {  
 
     if (massSend) {
       const paramsData = {
@@ -227,7 +228,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
         diaInicial: data.diaInicial,
         diaFinal: data.diaFinal,
       }
-      console.log(paramsData);
+
       // Quando for envio em massa, passamos a flag sem enviar os dados
       post(route('envioProducaoMedica.sendMail', { queryParams: paramsData , massSend: true }),{
         onSuccess: () => {
@@ -294,7 +295,11 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    get(route('envioProducaoMedica.searchAll'));
+    get(route('envioProducaoMedica.searchAll'), {
+      onSuccess: ({ props }) => {
+        setUploadedFilePath((props.flash as { message: { path: string } }).message.path);
+      }
+    });
   };
 
   /*function toggleSelectAll() {
@@ -446,6 +451,16 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
 
                   <div className="w-auto max-w-sm mt-0 ml-4">
                     <Label className="dark:text-gray-300 text-gray-600">Total: {count} Registros</Label>
+                  </div>
+
+                  <div className="w-auto max-w-sm mt-0 ml-4">
+                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                      <Input id="anexo" type="file" name="anexo" onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setData('anexo', e.target.files[0]);
+                        }
+                      }} />
+                    </div>
                   </div>
 
                     {selectedPrestadores.length > 0 && (

@@ -17,6 +17,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use setasign\Fpdi\Fpdi;
+use setasign\Fpdi\PdfReader;
+use setasign\Fpdi\PdfParser\StreamReader;
 
 class JobCreatePdfProducaoMedica implements ShouldQueue
 {
@@ -25,7 +28,7 @@ class JobCreatePdfProducaoMedica implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public $contratoFinanceiro, public $autoId, public $competencia, public $contrato, public $email, public $nome)
+    public function __construct(public $contratoFinanceiro, public $autoId, public $competencia, public $contrato, public $email, public $nome, public $anexo)
     {
     }
 
@@ -34,13 +37,13 @@ class JobCreatePdfProducaoMedica implements ShouldQueue
      */
     public function handle(): void
     {
+      $anexo = $this->anexo;
       $pdfId = $this->autoId;
       $pdfPath = $this->generatePdfProducao();
       $pdfPathExtrato = $this->generatePdfExtratoImposto();
 
-
       if($pdfPath){
-        JobSendProducaoMedicaEmail::dispatch($this->email, $this->competencia, $this->nome, $this->contrato, array($pdfPath,$pdfPathExtrato))->onQueue('emails');
+        JobSendProducaoMedicaEmail::dispatch($this->email, $this->competencia, $this->nome, $this->contrato, array($pdfPath,$pdfPathExtrato),$anexo)->onQueue('emails');
       }else {
         Log::error('Erro ao gerar o PDF para o email ID: ' . $pdfId. ' | Email: ' . $this->email . ' | Nome: ' . $this->nome);
       }
@@ -762,5 +765,23 @@ class JobCreatePdfProducaoMedica implements ShouldQueue
         Log::error('Erro ao gerar o PDF: ' . $e->getMessage());
         return false; // Retorna false em caso de erro
       }
+    }
+
+    private function addPasswordToPdf($pdfContent, $outputPath, $userPassword, $ownerPassword)
+    {
+        // Criar instância do FPDI
+        $pdf = new Fpdi();
+
+        // Carregar o conteúdo do PDF gerado pelo FPDF
+        $pdf->setSourceFile(StreamReader::createByString($pdfContent));
+        $pageId = $pdf->importPage(1);
+        $pdf->AddPage();
+        $pdf->useTemplate($pageId);
+
+        // Configurar proteção
+        $pdf->SetProtection([], $userPassword, $ownerPassword);
+
+        // Salvar o arquivo protegido
+        $pdf->Output('F', $outputPath);
     }
 }

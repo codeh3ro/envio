@@ -9,6 +9,7 @@ use App\Models\Cardio\ClassePrestador;
 use App\Models\Cardio\DocFinanceiro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProducaoMedicaController extends Controller
 {
@@ -188,7 +189,14 @@ class ProducaoMedicaController extends Controller
 
         env('APP_ENV') === 'local' ? $email = env('MAIL_ADDRESS_TEST') : $email;
 
-        JobCreatePdfProducaoMedica::dispatch($contratoFinanceiro, $autoId,$competencia, $contrato, $email, $nome)->onQueue('pdfs');
+        $request->validate([
+          'anexo' => 'file|max:50120', // Máx 50MB
+        ]);
+
+        $file = $request->file('anexo');
+        $anexo = Storage::putFileAs('temp/', $file, $file->getClientOriginalName());
+
+        JobCreatePdfProducaoMedica::dispatch($contratoFinanceiro, $autoId,$competencia, $contrato, $email, $nome, $anexo)->onQueue('pdfs');
 
       }
 

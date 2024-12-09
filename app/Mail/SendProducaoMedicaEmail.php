@@ -19,7 +19,7 @@ class SendProducaoMedicaEmail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public $competencia, public $nome, public $contrato, public $tempFiles)
+    public function __construct(public $competencia, public $nome, public $contrato, public $tempFiles, public $anexo)
     {
       $ano = substr($competencia, 0, 4);
       $mes = substr($competencia, 4, 2);
@@ -59,6 +59,7 @@ class SendProducaoMedicaEmail extends Mailable
      */
     public function attachments(): array
     {
+        $anexo = $this->anexo;
         $pathsTempFile = $this->tempFiles;
         $attachments = [];
 
@@ -66,6 +67,11 @@ class SendProducaoMedicaEmail extends Mailable
         $attachments[] = Attachment::fromPath(public_path('assets/logo.png'))
             ->as('logo.png')
             ->withMime('image/png');
+
+        // Adiciona o anexo
+        $attachments[] = Attachment::fromPath(Storage::path($anexo));
+            //->as($anexoNomeOriginal);
+            //->withMime($anexo->getClientMimeType());
 
         foreach ($pathsTempFile as $path) {
           $attachments[] = Attachment::fromPath(Storage::path($path));
