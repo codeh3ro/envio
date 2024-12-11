@@ -18,7 +18,6 @@ Route::get('/', function () {
 
 Route::redirect('/','dashboard');
 
-
 Route::middleware(['auth', 'verified'])->group(function () {
   Route::get('/dashboard', fn () => Inertia::render('Dashboard'))
     ->name('dashboard');
@@ -30,7 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
   // ROTAS DE TESTE PARA GERAR PDF
-  Route::get('/geraPdf', [PdfController::class, 'generatePdf'])->name('pdf.generate');
+  Route::get('/geraPdf', [PdfController::class, 'generate'])->name('pdf.generate');
 
 });
 

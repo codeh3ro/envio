@@ -189,14 +189,19 @@ class ProducaoMedicaController extends Controller
 
         env('APP_ENV') === 'local' ? $email = env('MAIL_ADDRESS_TEST') : $email;
 
+        $file = '';
+
         $request->validate([
-          'anexo' => 'file|max:50120', // Máx 50MB
+          'anexo' => 'nullable|file|max:50120', // Máx 50MB
         ]);
 
-        $file = $request->file('anexo');
-        $anexo = Storage::putFileAs('temp/', $file, $file->getClientOriginalName());
+        if($request->hasFile('anexo')){
+          $file = $request->file('anexo')->storeAs('temp', $request->file('anexo')->getClientOriginalName());
+        }
+        
+        //$anexo = Storage::putFileAs('temp/', $file, $file->getClientOriginalName());
 
-        JobCreatePdfProducaoMedica::dispatch($contratoFinanceiro, $autoId,$competencia, $contrato, $email, $nome, $anexo)->onQueue('pdfs');
+        JobCreatePdfProducaoMedica::dispatch($contratoFinanceiro, $autoId,$competencia, $contrato, $email, $nome, $file)->onQueue('pdfs');
 
       }
 

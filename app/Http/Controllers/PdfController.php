@@ -25,6 +25,8 @@ class PdfController extends Controller
           'name' => 'H3ro',
         );
 
+        Pdf::setOption(['adminPassword' => '123456']);
+
         $pdf = Pdf::loadView('pdf.relatorios.producaoMedica', $data);
 
         return $pdf->stream('invoice.pdf');

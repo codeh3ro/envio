@@ -57,7 +57,7 @@ type EmailPessoa = {
   AutoId: number
   Pessoa: string
   Seq: string
-  Email: string
+  Email: string | null
   InicioVigencia: string
   FimVigencia: any
   TelosRgUs: string
@@ -179,7 +179,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
     classePrestador: old.classePrestador || '',
     diaInicial: old.diaInicial || '',
     diaFinal: old.diaFinal || '',
-    anexo: old.anexo || (null as File | null),
+    anexo: null as File | null,
   });
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -196,7 +196,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
 
   const filteredClients = prestadores?.data.filter(client =>
     client.Nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.email_pessoa.Email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    client.email_pessoa?.Email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     client.Codigo.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -297,7 +297,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
 
     get(route('envioProducaoMedica.searchAll'), {
       onSuccess: ({ props }) => {
-        setUploadedFilePath((props.flash as { message: { path: string } }).message.path);
+        //setUploadedFilePath((props.flash as { message: { path: string } }).message.path);
       }
     });
   };
@@ -455,9 +455,10 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
 
                   <div className="w-auto max-w-sm mt-0 ml-4">
                     <div className="grid w-full max-w-sm items-center gap-1.5">
-                      <Input id="anexo" type="file" name="anexo" onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          setData('anexo', e.target.files[0]);
+                      <Input id="anexo" type="file" name="anexo" onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const file = e.target.files?.[0];
+                        if(file){
+                          setData('anexo', file);
                         }
                       }} />
                     </div>

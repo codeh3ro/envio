@@ -766,22 +766,4 @@ class JobCreatePdfProducaoMedica implements ShouldQueue
         return false; // Retorna false em caso de erro
       }
     }
-
-    private function addPasswordToPdf($pdfContent, $outputPath, $userPassword, $ownerPassword)
-    {
-        // Criar instância do FPDI
-        $pdf = new Fpdi();
-
-        // Carregar o conteúdo do PDF gerado pelo FPDF
-        $pdf->setSourceFile(StreamReader::createByString($pdfContent));
-        $pageId = $pdf->importPage(1);
-        $pdf->AddPage();
-        $pdf->useTemplate($pageId);
-
-        // Configurar proteção
-        $pdf->SetProtection([], $userPassword, $ownerPassword);
-
-        // Salvar o arquivo protegido
-        $pdf->Output('F', $outputPath);
-    }
 }

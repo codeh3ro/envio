@@ -69,9 +69,11 @@ class SendProducaoMedicaEmail extends Mailable
             ->withMime('image/png');
 
         // Adiciona o anexo
-        $attachments[] = Attachment::fromPath(Storage::path($anexo));
-            //->as($anexoNomeOriginal);
-            //->withMime($anexo->getClientMimeType());
+        if($this->anexo != ''){
+            $attachments[] = Attachment::fromPath(Storage::path($anexo));
+                //->as($anexoNomeOriginal);
+                //->withMime($anexo->getClientMimeType());
+        }
 
         foreach ($pathsTempFile as $path) {
           $attachments[] = Attachment::fromPath(Storage::path($path));
