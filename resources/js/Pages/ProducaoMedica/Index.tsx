@@ -196,7 +196,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
 
   const filteredClients = prestadores?.data.filter(client =>
     client.Nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.email_pessoa?.Email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //client.email_pessoa?.Email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     client.Codigo.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -442,7 +442,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
                     <Label htmlFor="final">Pesquisar:</Label>
                     <Input
                       type="text"
-                      placeholder="Pesquise pelo nome, e-mail ou contrato"
+                      placeholder="Pesquise pelo nome ou contrato"
                       value={searchTerm}
                       onChange={handleSearch}
                       className="max-w-sm ml-3"
