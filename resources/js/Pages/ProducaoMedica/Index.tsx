@@ -194,10 +194,13 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
     setSearchTerm(event.target.value)
   }
 
+  const normalizeText = (text: string) => 
+    text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  
   const filteredClients = useMemo(() => {
     return prestadores?.data.filter(client =>
-      client.Nome?.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-      client.Codigo?.toString().toLowerCase().includes(searchTerm.toLowerCase().trim())
+      (client.Nome && normalizeText(client.Nome).includes(normalizeText(searchTerm))) ||
+      (client.Codigo && normalizeText(client.Codigo.toString()).includes(normalizeText(searchTerm)))
     );
   }, [prestadores, searchTerm]);
 
@@ -532,8 +535,9 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredClients?.map(client => (
-                        <TableRow key={client.Codigo}>
+                    {(filteredClients ?? []).length > 0 ? (
+                      filteredClients?.map((client,index) => (
+                        <TableRow key={`${client.Codigo}-${index}`}>
                           <TableCell>
                             <Checkbox
                               disabled={!client.email_pessoa || client.email_pessoa.Email === ''}
@@ -598,7 +602,11 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
                             </Dialog>
                           </TableCell>
                         </TableRow>
-                      ))}
+                      ))) : (
+                        <TableRow>
+                          <TableCell colSpan={12} className="text-center p-8">Nenhum registro encontrado.</TableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
                   {prestadores?.links && <Pagination links={prestadores.links as Link[]}/>}
