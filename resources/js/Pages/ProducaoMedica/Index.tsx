@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import {Head, useForm, usePage} from '@inertiajs/react';
-import React, {useState, FormEventHandler, useEffect} from 'react';
+import React, {useState, FormEventHandler, useEffect, useMemo} from 'react';
 import { PatternFormat } from 'react-number-format';
 import Swal from 'sweetalert2'
 
@@ -194,11 +194,12 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
     setSearchTerm(event.target.value)
   }
 
-  const filteredClients = prestadores?.data.filter(client =>
-    client.Nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    //client.email_pessoa?.Email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.Codigo.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredClients = useMemo(() => {
+    return prestadores?.data.filter(client =>
+      client.Nome?.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+      client.Codigo?.toString().toLowerCase().includes(searchTerm.toLowerCase().trim())
+    );
+  }, [prestadores, searchTerm]);
 
   const handleCheckboxChange = (user: any) => {
     if (selectedPrestadores.includes(user)) {
@@ -207,16 +208,6 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
       setSelectedPrestadores([...selectedPrestadores, user]);
     }
   };
-
-  /*const handleCheckboxChange = (user: any) => {
-    if (selectedPrestadores.includes(user)) {
-      // Remove o usuário da lista
-      setSelectedPrestadores(selectedPrestadores.filter((e) => e !== user));
-    } else if (user?.email_pessoa?.Email && user.email_pessoa.Email.trim() !== "") {
-      // Adiciona o usuário à lista apenas se ele tiver um e-mail válido
-      setSelectedPrestadores([...selectedPrestadores, user]);
-    }
-  };*/
 
   const handleSendEmail = (massSend = false, onlySelected = false) => {  
 
