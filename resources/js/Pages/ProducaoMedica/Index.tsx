@@ -161,6 +161,7 @@ type Props = {
   old: {
     compFinanceira: string
     codigoContrato: string
+    nome: string
     classePrestador: string
     diaInicial: string
     diaFinal: string
@@ -176,6 +177,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
   const { data, setData, post, processing, get } = useForm({
     compFinanceira: old.compFinanceira || '',
     codigoContrato: old.codigoContrato || '',
+    nome: old.nome || '',
     classePrestador: old.classePrestador || '',
     diaInicial: old.diaInicial || '',
     diaFinal: old.diaFinal || '',
@@ -296,23 +298,6 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
     });
   };
 
-  /*function toggleSelectAll() {
-    if (selectAllChecked) {
-      setSelectedPrestadores([]);
-    } else {
-      setSelectedPrestadores(
-        prestadores?.data
-        .map((prestador) => {
-        if(prestador.email_pessoa.Email !== ''){
-          return prestador
-        }else{
-          return null
-        }
-      }) ?? []);
-    }
-    setSelectAllChecked(!selectAllChecked);
-  }*/
-
     function toggleSelectAll() {
       if (selectAllChecked) {
         setSelectedPrestadores([]);
@@ -371,6 +356,20 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
                         </div>
 
                         <div className="w-auto max-w-sm mr-5">
+                          <Label htmlFor="nome">Nome</Label>
+                          <Input                            
+                            type='text'
+                            className={`w-[230px]`}
+                            value={data.nome}
+                            maxLength={60}
+                            id="nome"
+                            placeholder="Nome"
+                            autoComplete="off"
+                            onChange={(e) => setData('nome', e.target.value.replace(/[0-9]/g, "").toUpperCase())}
+                          />
+                        </div>
+
+                        <div className="w-auto max-w-sm mr-5">
                           <Label htmlFor="prestador">Classe Prestador</Label>
                           <Select
                             value={data.classePrestador}
@@ -396,7 +395,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
                             format="##"
                             value={data.diaInicial}
                             customInput={Input}
-                            className={`w-[180px] ${errors.diaInicial && 'border-destructive'} `}
+                            className={`w-[100px] ${errors.diaInicial && 'border-destructive'} `}
                             onChange={(e) => setData('diaInicial', e.target.value)}
                             placeholder="Dia inicial"
                             autoComplete="off"
@@ -412,7 +411,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
                             customInput={Input} onChange={(e) => setData('diaFinal', e.target.value)}
                             placeholder="Dia final"
                             autoComplete="off"
-                            className={`w-[180px] ${errors.diaFinal && 'border-destructive'} `}
+                            className={`w-[100px] ${errors.diaFinal && 'border-destructive'} `}
                           />
                       </div>
                       </div>

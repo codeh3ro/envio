@@ -40,6 +40,7 @@ class ProducaoMedicaController extends Controller
 
         // Recupera os parâmetros do request
         $codigoContrato = $request->input('codigoContrato');
+        $nome = $request->input('nome');
         $classePrestador = $request->input('classePrestador');
         $diaInicial = $request->input('diaInicial');
         $diaFinal = $request->input('diaFinal');
@@ -72,6 +73,9 @@ class ProducaoMedicaController extends Controller
         $query->when($codigoContrato, function ($q) use ($codigoContrato) {
           $q->where('ContratoFinanceiro.Codigo', $codigoContrato);
           //$q->where('DocFinanceiro.ContratoFinanceiro', $codigoContrato);
+        });
+        $query->when($nome, function ($q) use ($nome) {
+          $q->where('Pessoa.Nome', 'like', '%' . $nome . '%');
         });
         $query->when($classePrestador, function ($q) use ($classePrestador) {
           $q->where('PrestadorServico.Classe', $classePrestador);
@@ -116,6 +120,7 @@ class ProducaoMedicaController extends Controller
 
           // Recupera os parâmetros do request
           $codigoContrato = $params['codigoContrato'];
+          $nome = $params['nome'];
           $classePrestador = $params['classePrestador'];
           $diaInicial = $params['diaInicial'];
           $diaFinal = $params['diaFinal'];
@@ -157,7 +162,7 @@ class ProducaoMedicaController extends Controller
           });
 
           $query->orderBy('ContratoFinanceiro.Codigo');
-
+          
           $resultados = $query->get()->toArray();
 
         }
