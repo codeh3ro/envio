@@ -92,7 +92,7 @@
                             <tr>
                               <td align="center" style="padding:0;Margin:0;font-size:0px">
                                 <a target="_blank" href="{{ config('app.url') }}" style="mso-line-height-rule:exactly;text-decoration:underline;color:#2D3142;font-size:18px">
-                                  <img src="cid:{{ $logoCid }}" alt="Unimed Logo" title="{{ config('app.name') }}" width="200" height="100" style="display:block;font-size:18px;border:0;outline:none;text-decoration:none;border-radius:0">
+                                  <img src="cid:{{ $logoCid }}" alt="Unimed Logo" title="{{ config('app.name') }}" width="170" height="100" style="display:block;font-size:18px;border:0;outline:none;text-decoration:none;border-radius:0">
                                 </a>
                               </td>
                             </tr>
@@ -138,7 +138,7 @@
                             <tr>
                               <td align="left" style="padding:0;Margin:0"><p style="Margin:0;mso-line-height-rule:exactly;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;line-height:25.5px !important;letter-spacing:0;color:#2D3142;font-size:17px">
                                   Atenciosamente,<br><br>
-                                  {{ 'Financeiro' }}<br>
+                                  {{ 'Relacionamento com cooperado' }}<br>
                                   {{ config('app.empresa') }}</p></td>
                             </tr>
                           </table></td>
