@@ -220,6 +220,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
       const paramsData = {
         compFinanceira: data.compFinanceira,
         codigoContrato: data.codigoContrato,
+        nome: data.nome,
         classePrestador: data.classePrestador,
         diaInicial: data.diaInicial,
         diaFinal: data.diaFinal,
