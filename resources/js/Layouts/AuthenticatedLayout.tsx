@@ -72,7 +72,20 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                             </a>
                                           </NavigationMenuLink>
                                         </li>
-                                        {/*<DropdownMenuSeparator/>*/}
+                                        
+                                        <DropdownMenuSeparator/>
+
+                                        <li className="p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-[#111827]">
+                                          <NavigationMenuLink asChild>
+                                            <a
+                                              className="flex flex-col text-sm"
+                                              href={route('envioAnexo.index')}
+                                            >
+                                              Envio de Anexo
+                                            </a>
+                                          </NavigationMenuLink>
+                                        </li>
+
                                       </ul>
                                     </NavigationMenuContent>
                                   </NavigationMenuItem>

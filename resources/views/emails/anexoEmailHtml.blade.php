@@ -110,7 +110,7 @@
                               <td align="left" style="padding:20px;Margin:0">
                                 <p style="Margin:0;mso-line-height-rule:exactly;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;line-height:27px;letter-spacing:0;color:#2D3142;font-size:18px"><br></p><p style="Margin:0;mso-line-height-rule:exactly;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;line-height:27px;letter-spacing:0;color:#2D3142;font-size:18px">
                                   Prezado(a) {{ $nome }},<br><br>
-                                  <span style="font-size:17px">Segue em anexo o Espelho de Pagamento Produção Médica referente a competência {{ $competencia }}.</span>
+                                  <span style="font-size:17px">Segue anexo de comunicado da {{ config('app.empresa') }}.</span>
                                 </p>
                                 <p style="Margin:0;mso-line-height-rule:exactly;font-family:helvetica, 'helvetica neue', arial, verdana, sans-serif;line-height:25.5px;letter-spacing:0;color:#2D3142;font-size:17px"><br>
                                 Contrato: {{ $contrato }}
