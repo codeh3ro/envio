@@ -169,7 +169,7 @@ class ProducaoMedicaController extends Controller
 
         foreach ($resultados as $result) {
           $users[] = [
-            'email' => $result['email_pessoa']['Email'],
+            'email' => $result['email_pessoa']['Email'] ?? '',
             'nome' => $result['Nome'],
             'competencia' => $result['CompFinanceira'],
             'contrato' => $result['Codigo'],
@@ -185,7 +185,7 @@ class ProducaoMedicaController extends Controller
       }
 
       foreach ($users as $user) {
-        $email = is_array($user) ? $user['email'] : $user->email;
+        $email = is_array($user) ? $user['email'] : $user->email ?? '';
         $nome = is_array($user) ? $user['nome'] : $user->name;
         $competencia = is_array($user) ? $user['competencia'] : $user->competencia;
         $contrato = is_array($user) ? $user['contrato'] : $user->contrato;

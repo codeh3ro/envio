@@ -154,15 +154,21 @@ type IClasses = {
   Codigo: string
   Nome: string
 }
+type IEspecialidades = {
+  Codigo: string
+  Nome: string
+}
 type Props = {
   prestadores?: IRoot
   count?: number
   classes: IClasses[]
+  especialidades: IEspecialidades[]
   old: {
     compFinanceira: string
     codigoContrato: string
     nome: string
     classePrestador: string
+    especialidade: string
     diaInicial: string
     diaFinal: string
     anexo: null
@@ -170,7 +176,7 @@ type Props = {
 }
 
 
-export default function EnvioProducaoMedica({ prestadores, count, classes, old } : Props) {
+export default function EnvioProducaoMedica({ prestadores, count, classes, especialidades, old } : Props) {
 
   const errors = usePage().props.errors;
 
@@ -179,6 +185,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
     codigoContrato: old.codigoContrato || '',
     nome: old.nome || '',
     classePrestador: old.classePrestador || '',
+    especialidade: old.especialidade || '',
     diaInicial: old.diaInicial || '',
     diaFinal: old.diaFinal || '',
     anexo: null as File | null,
@@ -405,6 +412,25 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
                             <SelectContent>
                               {classes.map((classe) => (
                                 <SelectItem key={classe.Codigo} value={(classe.Codigo).toString()}>{classe.Nome}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="w-auto max-w-sm mr-5">
+                          <Label htmlFor="prestador">Especialidade</Label>
+                          <Select
+                            value={data.especialidade}
+                            onValueChange={(value) => {
+                              setData('especialidade', value)
+                            }}
+                          >
+                            <SelectTrigger className={`w-[180px] ${errors.especialidade && 'border-destructive'} `}>
+                              <SelectValue placeholder="Selecione a classe"/>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {especialidades.map((especialidade) => (
+                                <SelectItem key={especialidade.Codigo} value={(especialidade.Codigo).toString()}>{especialidade.Nome}</SelectItem>
                               ))}
                             </SelectContent>
                           </Select>

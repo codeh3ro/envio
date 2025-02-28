@@ -13,8 +13,12 @@
         "laravel/horizon": "^5.29",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "mpdf/mpdf": "^8.2",
+        "opcodesio/log-viewer": "^3.14",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",
+        "setasign/fpdi-protection": "^2.1",
+        "tecnickcom/tcpdf": "^6.8",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {

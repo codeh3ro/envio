@@ -299,18 +299,20 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
     });
   };
 
-    function toggleSelectAll() {
-      if (selectAllChecked) {
-        setSelectedPrestadores([]);
-      } else {
-        setSelectedPrestadores(
-          prestadores?.data
-            .filter(prestador => prestador?.email_pessoa?.Email?.trim() !== '')
-            .map(prestador => prestador) ?? []
-        );
-      }
-      setSelectAllChecked(!selectAllChecked);
+  function toggleSelectAll() {
+    if (selectAllChecked) {
+      setSelectedPrestadores([]);
+    } else {
+      setSelectedPrestadores(
+        prestadores?.data
+          .filter(prestador => 
+            prestador?.email_pessoa?.Email && prestador.email_pessoa.Email.trim() !== ''
+          )
+          .map(prestador => prestador) ?? []
+      );
     }
+    setSelectAllChecked(!selectAllChecked);
+  }
 
   return (
         <AuthenticatedLayout
@@ -388,7 +390,7 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
                             </SelectContent>
                           </Select>
                         </div>
-
+                        
                         <div className="w-auto max-w-sm mr-5">
                           <Label htmlFor="inicial">Dia Inicial</Label>
 
@@ -490,7 +492,9 @@ export default function EnvioProducaoMedica({ prestadores, count, classes, old }
                               <Tooltip >
                                 <TooltipTrigger asChild>
                                   <Button className="w-5 h-5" variant="ghost" size="icon" onClick={toggleSelectAll}>
-                                    {selectAllChecked ? <SquareX size={'23'} className="dark:text-white text-black/50" /> : <Square size={'23'} className="dark:text-white text-black/50" />}
+                                    {selectAllChecked ? 
+                                      <SquareX size={'23'} className="dark:text-white text-black/50" /> : 
+                                      <Square size={'23'} className="dark:text-white text-black/50" />}
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent side='bottom'>

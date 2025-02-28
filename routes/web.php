@@ -32,7 +32,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::post('/envioAnexo/sendAnexoMail', [EnvioAnexoController::class,'sendAnexoEmail'])->name('envioAnexo.sendAnexoMail');
 
   // ROTAS DE TESTE PARA GERAR PDF
-  Route::get('/geraPdf', [PdfController::class, 'generate'])->name('pdf.generate');
+  //Route::get('/geraPdf', [PdfController::class, 'generatePdfProducao'])->name('pdf.generate');
+  Route::get('/geraPdf2', [PdfController::class, 'generatePdfExtratoImposto'])->name('pdf.generate');
 
 });
 

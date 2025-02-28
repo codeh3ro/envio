@@ -17,9 +17,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use setasign\Fpdi\Fpdi;
-use setasign\Fpdi\PdfReader;
-use setasign\Fpdi\PdfParser\StreamReader;
+use Mpdf\Mpdf;
 
 class JobCreatePdfProducaoMedica implements ShouldQueue
 {
@@ -551,8 +549,27 @@ class JobCreatePdfProducaoMedica implements ShouldQueue
           $fileName = 'EspelhoPagamento-' . $autoId . '_Comp_' . substr($compFinanceira, 4) . '-' . substr($compFinanceira, 0, 4) . '.pdf';
           $pdfPath = 'temp/' . $fileName;
 
-          $arquivo = $pdf->Output('S', $pdfPath);
+          $pdf->Output('F', storage_path('app/public/' . $pdfPath));
 
+          $mpdf = new Mpdf(['tempDir'=>storage_path(base_path('storage/app/public/'.$pdfPath))]);
+          $pagecount = $mpdf->SetSourceFile(base_path('storage/app/public/'.$pdfPath));
+
+          // Gerar o conteúdo do PDF (sem proteção)
+          $pdfContent = '';
+
+          // Criar o conteúdo do PDF (importando as páginas)
+          for ($i = 1; $i <= $pagecount; $i++) {
+            // Importar cada página
+            $templateId = $mpdf->importPage($i);
+            $mpdf->getTemplateSize($templateId);
+
+            // Adicionar a página ao conteúdo PDF
+            $pdfContent .= $mpdf->useTemplate($templateId);
+          }      
+          
+          //$mpdf->SetProtection(['print', 'copy'], '123', 'kmzway87aa@');  // Adicionando senha
+          $arquivo = $mpdf->Output($pdfContent, 'S');  // Gerar o PDF protegido em string
+          
           Storage::put($pdfPath, $arquivo);
         }
 
@@ -753,8 +770,26 @@ class JobCreatePdfProducaoMedica implements ShouldQueue
           $fileName = 'ExtratoImposto-' . $this->autoId . '_Comp_' . substr($this->competencia, 4) . '-' . substr($this->competencia, 0, 4) . '.pdf';
           $pdfPath = 'temp/' . $fileName;
 
-          $arquivo = $pdf->Output('S', $pdfPath);
+          $pdf->Output('F', storage_path('app/public/' . $pdfPath));
 
+          $mpdf = new Mpdf(['tempDir'=>storage_path(base_path('storage/app/public/'.$pdfPath))]);
+          $pagecount = $mpdf->SetSourceFile(base_path('storage/app/public/'.$pdfPath));
+
+          // Gerar o conteúdo do PDF (sem proteção)
+          $pdfContent = '';
+
+          // Criar o conteúdo do PDF (importando as páginas)
+          for ($i = 1; $i <= $pagecount; $i++) {
+            // Importar cada página
+            $templateId = $mpdf->importPage($i);
+            $mpdf->getTemplateSize($templateId);
+
+            // Adicionar a página ao conteúdo PDF
+            $pdfContent .= $mpdf->useTemplate($templateId);
+          }      
+          
+          $mpdf->SetProtection(['print', 'copy'], '123', 'kmzway87aa@');  // Adicionando senha
+          $arquivo = $mpdf->Output($pdfContent, 'S');  // Gerar o PDF protegido em string
 
           Storage::put($pdfPath, $arquivo);
         }

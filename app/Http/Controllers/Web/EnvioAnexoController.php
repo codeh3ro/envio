@@ -7,6 +7,7 @@ use App\Http\Requests\ProducaoMedicaRequest;
 use App\Jobs\JobSendAnexoEmail;
 use App\Models\Cardio\ClassePrestador;
 use App\Models\Cardio\DocFinanceiro;
+use App\Models\Cardio\EspecialidadeServico;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +20,8 @@ class EnvioAnexoController extends Controller
     public function index(Request $request)
     {
       $classes = ClassePrestador::all('Codigo', 'Nome');
-
+      $especialidades = EspecialidadeServico::all('Codigo', 'Nome');
+      
       return inertia('Anexo/Index', [
         'prestadores' => [
           'data' => []
@@ -27,6 +29,7 @@ class EnvioAnexoController extends Controller
         'params' => '',
         'count' => 0,
         'classes' => $classes,
+        'especialidades' => $especialidades,
         'old' => fn() => $request->old()
       ]);
     }
@@ -42,6 +45,7 @@ class EnvioAnexoController extends Controller
         $codigoContrato = $request->input('codigoContrato');
         $nome = $request->input('nome');
         $classePrestador = $request->input('classePrestador');
+        $especialidade = $request->input('especialidade');
         $diaInicial = $request->input('diaInicial');
         $diaFinal = $request->input('diaFinal');
         $compFinanceira = $request->input('compFinanceira');
@@ -54,21 +58,118 @@ class EnvioAnexoController extends Controller
 
         $query = DocFinanceiro::with('EmailPessoa');
 
+        // $query->select([
+        //   'ContratoFinanceiro.Codigo',
+        //   'Pessoa.Nome',
+        //   'Pessoa.Cnp',
+        //   'SituacaoDocumento.Nome as SituacaoDoc',
+        //   DB::raw('DAY(DocFinanceiro.DataVencimento) AS DIA'),
+        //   'ContratoFinanceiro.Pessoa as PessoaID',
+        //   'DocFinanceiro.*'
+        // ])
+        //   ->join('ContratoFinanceiro', 'ContratoFinanceiro.AutoId', '=', 'DocFinanceiro.ContratoFinanceiro')
+        //   ->join('Pessoa', 'Pessoa.AutoId', '=', 'ContratoFinanceiro.Pessoa')
+        //   ->join('SituacaoDocumento', 'SituacaoDocumento.Codigo', '=', 'DocFinanceiro.SituacaoDocumento')
+        //   ->join('PrestadorServico', 'PrestadorServico.ContratoFinanceiro', '=', 'ContratoFinanceiro.AutoId')
+        //   ->where('DocFinanceiro.CompFinanceira', $finalCompetencia)
+        //   ->where('DocFinanceiro.Classe', 3);
+
+
+
         $query->select([
           'ContratoFinanceiro.Codigo',
           'Pessoa.Nome',
           'Pessoa.Cnp',
           'SituacaoDocumento.Nome as SituacaoDoc',
           DB::raw('DAY(DocFinanceiro.DataVencimento) AS DIA'),
-          'ContratoFinanceiro.Pessoa as PessoaID',
-          'DocFinanceiro.*'
+          'ContratoFinanceiro.Pessoa AS PessoaID',
+          'DocFinanceiro.AutoId',
+          'DocFinanceiro.Classe',
+          'DocFinanceiro.NumeroProvisorio',
+          'DocFinanceiro.NumDocFornec',
+          'DocFinanceiro.Numero',
+          'DocFinanceiro.Pessoa',
+          'DocFinanceiro.ContratoFinanceiro',
+          'DocFinanceiro.CompFinanceira',
+          'DocFinanceiro.CompSeq',
+          'DocFinanceiro.DataEmissao',
+          'DocFinanceiro.DataVencimento',
+          'DocFinanceiro.TipoNegJuros',
+          'DocFinanceiro.TipoNegMultas',
+          'DocFinanceiro.ValorBruto',
+          'DocFinanceiro.ValorLiquido',
+          'DocFinanceiro.EProvisao',
+          'DocFinanceiro.SituacaoDocumento',
+          'DocFinanceiro.SaldoEmAberto',
+          'DocFinanceiro.DataSituacao',
+          'DocFinanceiro.DataContPDD',
+          'DocFinanceiro.DataInclusao',
+          'DocFinanceiro.CodLotacao',
+          'DocFinanceiro.CompGeracao',
+          'DocFinanceiro.DocResultante',
+          'DocFinanceiro.DocProvisao',
+          'DocFinanceiro.PracaCobranca',
+          'DocFinanceiro.DocOrigem',
+          'DocFinanceiro.DocAjustado',
+          'DocFinanceiro.TelosRgUs',
+          'DocFinanceiro.TelosRgDt',
+          'DocFinanceiro.TelosUpUs',
+          'DocFinanceiro.TelosUpDt',
+          'DocFinanceiro.TelosCtrler',
+          'DocFinanceiro.IdGerador',
+          'DocFinanceiro.InfoCompl',
+          'DocFinanceiro.EAgrupamento',
+          'DocFinanceiro.TotalDebitos',
+          'DocFinanceiro.TotalCreditos',
+          'DocFinanceiro.TipoGerador',
+          'DocFinanceiro.SomenteProvisorio',
+          'DocFinanceiro.DocVinculado',
+          'DocFinanceiro.GeradorDoc',
+          'DocFinanceiro.ContratoFinanceiroResp',
+          'DocFinanceiro.CamaraCompensacao',
+          'DocFinanceiro.DiaCompetencia',
+          'DocFinanceiro.PercTaxaAdm',
+          'DocFinanceiro.Conferido',
+          'DocFinanceiro.Observacao',
+          'DocFinanceiro.ClassificacaoCobranca',
+          'DocFinanceiro.ValorFatInterc',
+          'DocFinanceiro.DataEmiFatInterc',
+          'DocFinanceiro.DataVencFatInterc',
+          'DocFinanceiro.ValorNDC',
+          'DocFinanceiro.DataEmiNDC',
+          'DocFinanceiro.DataVencNDC',
+          'DocFinanceiro.NumFatInterc',
+          'DocFinanceiro.NumNDC',
+          'DocFinanceiro.Tp_Arquivo',
+          'DocFinanceiro.ProcessoFinanceiro',
+          'DocFinanceiro.RecursoGlosa',
+          'DocFinanceiro.TipoDocFinanceiroFatura',
+          'DocFinanceiro.TipoDocFinanceiroNDC',
+          'DocFinanceiro.NFeSerie',
+          'DocFinanceiro.NFeNumero',
+          'DocFinanceiro.NFeCodigoVerificacao',
+          'DocFinanceiro.NFeDataEmissao',
+          'DocFinanceiro.DocumentoFiscal1',
+          'DocFinanceiro.DocumentoFiscal2',
+          'DocFinanceiro.ValorPreestabelecido',
+          'DocFinanceiro.OutrasFormasRemuneracao',
+          'DocFinanceiro.DataMonitoramento',
+          'DocFinanceiro.IdentCobranca',
+          'DocFinanceiro.PendenteEmissaoNFSe',
+          'EspecialidadeServico.Codigo as EspecialidadeCodigo',
+          'EspecialidadeServico.Nome as EspecialidadeNome',
         ])
-          ->join('ContratoFinanceiro', 'ContratoFinanceiro.AutoId', '=', 'DocFinanceiro.ContratoFinanceiro')
-          ->join('Pessoa', 'Pessoa.AutoId', '=', 'ContratoFinanceiro.Pessoa')
-          ->join('SituacaoDocumento', 'SituacaoDocumento.Codigo', '=', 'DocFinanceiro.SituacaoDocumento')
-          ->join('PrestadorServico', 'PrestadorServico.ContratoFinanceiro', '=', 'ContratoFinanceiro.AutoId')
-          ->where('DocFinanceiro.CompFinanceira', $finalCompetencia)
-          ->where('DocFinanceiro.Classe', 3);
+      ->join('ContratoFinanceiro', 'ContratoFinanceiro.AutoId', '=', 'DocFinanceiro.ContratoFinanceiro')
+      ->join('Pessoa', 'Pessoa.AutoId', '=', 'ContratoFinanceiro.Pessoa')
+      ->join('SituacaoDocumento', 'SituacaoDocumento.Codigo', '=', 'DocFinanceiro.SituacaoDocumento')
+      ->join('PrestadorServico', 'PrestadorServico.ContratoFinanceiro', '=', 'ContratoFinanceiro.AutoId')
+      ->leftJoin('EspecPrestador', 'EspecPrestador.Prestador', '=', 'PrestadorServico.AutoId')
+      ->leftJoin('EspecialidadeServico', 'EspecialidadeServico.AutoId', '=', 'EspecPrestador.Especialidade')
+      ->where('DocFinanceiro.CompFinanceira', $finalCompetencia)
+      ->where('DocFinanceiro.Classe', 3)
+      ->whereNull('EspecPrestador.FimVigencia');
+
+
 
         $query->when($codigoContrato, function ($q) use ($codigoContrato) {
           $q->where('ContratoFinanceiro.Codigo', $codigoContrato);
@@ -79,6 +180,9 @@ class EnvioAnexoController extends Controller
         });
         $query->when($classePrestador, function ($q) use ($classePrestador) {
           $q->where('PrestadorServico.Classe', $classePrestador);
+        });
+        $query->when($especialidade, function ($q) use ($especialidade) {
+          $q->where('EspecialidadeServico.Codigo', $especialidade);
         });
         $query->when(!empty($diaInicial) && !empty($diaFinal), function ($q) use ($diaInicial, $diaFinal) {
           $q->whereBetween(DB::raw('DAY(DocFinanceiro.DataVencimento)'), [$diaInicial, $diaFinal]);
@@ -93,12 +197,14 @@ class EnvioAnexoController extends Controller
         $resultados = $query->paginate(30);
 
         $classes = ClassePrestador::all('Codigo', 'Nome');
+        $especialidades = EspecialidadeServico::all('Codigo', 'Nome');
 
         return inertia('Anexo/Index', [
           'prestadores' => $resultados,
           'params' => $params,
           'count' => $count,
           'classes' => $classes,
+          'especialidades' => $especialidades,
           'old' => $request->all()
         ]);
 
